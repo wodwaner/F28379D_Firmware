@@ -5,8 +5,10 @@
 // ====== Local functions ==================
 
 // ======= Interruptions ===================
+#ifdef _FLASH
 #pragma CODE_SECTION(isr_cpu_timer0, ".TI.ramfunc");
 #pragma CODE_SECTION(isr_scia_rx, ".TI.ramfunc");
+#endif
 __interrupt void isr_cpu_timer0(void);
 __interrupt void isr_scia_rx(void);
 // ======= Local variables =================
@@ -15,9 +17,6 @@ st_SCI SCI;
 
 void main(void){
     uint8_t i;
-#ifdef _FLASH
-    memcpy(&Upflash_RunStart, &Upflash_LoadStart, (size_t)&Upflash_LoadSize);
-#endif
 
     InitSysCtrl();                              // Initialize System Control:
     DisablePeripheralClocks();

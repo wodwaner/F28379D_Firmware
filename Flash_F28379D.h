@@ -78,11 +78,11 @@ typedef struct{
 }st_BlockHeader;
 
 #ifdef _FLASH
-#pragma CODE_SECTION(FW_Update,".ramUpdateFlash");
-#pragma CODE_SECTION(FW_Copy_Data,".ramUpdateFlash");
-#pragma CODE_SECTION(Flash_Find_Sector,".ramUpdateFlash");
-#pragma CODE_SECTION(Flash_Set_APIError,".ramUpdateFlash");
-#pragma CODE_SECTION(Flash_Get_SCI_Data,".ramUpdateFlash");
+#pragma CODE_SECTION(FW_Update,".TI.ramfunc");
+#pragma CODE_SECTION(FW_Copy_Data,".TI.ramfunc");
+#pragma CODE_SECTION(Flash_Find_Sector,".TI.ramfunc");
+#pragma CODE_SECTION(Flash_Set_APIError,".TI.ramfunc");
+#pragma CODE_SECTION(Flash_Get_SCI_Data,".TI.ramfunc");
 
 extern Uint16 Upflash_LoadStart;
 extern Uint16 Upflash_LoadSize;

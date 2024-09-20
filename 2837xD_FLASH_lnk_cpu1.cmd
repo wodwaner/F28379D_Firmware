@@ -106,81 +106,49 @@ SECTIONS
     #if __TI_COMPILER_VERSION__ >= 15009000
         #if defined(__TI_EABI__)
             .TI.ramfunc : {} LOAD = FLASHE,
-                            RUN = RAMLS0,
+                            RUN = RAMD0_1,
                             LOAD_START(RamfuncsLoadStart),
                             LOAD_SIZE(RamfuncsLoadSize),
                             LOAD_END(RamfuncsLoadEnd),
                             RUN_START(RamfuncsRunStart),
                             RUN_SIZE(RamfuncsRunSize),
                             RUN_END(RamfuncsRunEnd),
-                            PAGE = 0, ALIGN(8)
-
-             .ramUpdateFlash : {} LOAD = FLASHN,
-             				RUN = RAMD0_1,
-							LOAD_START(Upflash_LoadStart),
-							LOAD_SIZE(Upflash_LoadSize),
-							LOAD_END(Upflash_LoadEnd),
-							RUN_START(Upflash_RunStart),
-							RUN_SIZE(Upflash_RunSize),
-							RUN_END(Upflash_RunEnd),
-							PAGE = 0, ALIGN(0),
-							{
+                            PAGE = 0, ALIGN(8),
+                            {
                              -l F021_API_F2837xD_FPU32.lib (.text)
                          	}
 
         #else
             .TI.ramfunc : {} LOAD = FLASHE,
-                            RUN = RAMLS0,
+                            RUN = RAMD0_1,
                             LOAD_START(_RamfuncsLoadStart),
                             LOAD_SIZE(_RamfuncsLoadSize),
                             LOAD_END(_RamfuncsLoadEnd),
                             RUN_START(_RamfuncsRunStart),
                             RUN_SIZE(_RamfuncsRunSize),
                             RUN_END(_RamfuncsRunEnd),
-                            PAGE = 0, ALIGN(8)
-
-            .ramUpdateFlash : {} LOAD = FLASHN,
-             				RUN = RAMD0_1,
-							LOAD_START(_Upflash_LoadStart),
-							LOAD_SIZE(_Upflash_LoadSize),
-							LOAD_END(_Upflash_LoadEnd),
-							RUN_START(_Upflash_RunStart),
-							RUN_SIZE(_Upflash_RunSize),
-							RUN_END(_Upflash_RunEnd),
-							PAGE = 0, ALIGN(0),
-							{
+                            PAGE = 0, ALIGN(8),
+                            {
                              -l F021_API_F2837xD_FPU32.lib (.text)
                          	}
         #endif
     #else
-   ramfuncs            : LOAD = FLASHN,
-                         RUN = RAMLS0,
+   ramfuncs            : LOAD = FLASHE,
+                         RUN = RAMD0_1,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
                          LOAD_END(_RamfuncsLoadEnd),
                          RUN_START(_RamfuncsRunStart),
                          RUN_SIZE(_RamfuncsRunSize),
                          RUN_END(_RamfuncsRunEnd),
-                         PAGE = 0, ALIGN(8)
-
-   ramUpdateFlash 	: LOAD = FLASHA,
-       					RUN = RAMD0_1,
-						LOAD_START(_Upflash_LoadStart),
-						LOAD_SIZE(_Upflash_LoadSize),
-						LOAD_END(_Upflash_LoadEnd),
-						RUN_START(_Upflash_RunStart),
-						RUN_SIZE(_Upflash_RunSize),
-						RUN_END(_Upflash_RunEnd),
-						PAGE = 0, ALIGN(0),
-						{
+                         PAGE = 0, ALIGN(8),
+                         {
                              -l F021_API_F2837xD_FPU32.lib (.text)
-                        }
+                         }
+
     #endif
 
 #endif
-
- 	FW_Data		: > RAMM0, PAGE=1
-
 
    /* The following section definitions are required when using the IPC API Drivers */
     GROUP : > CPU1TOCPU2RAM, PAGE = 1
