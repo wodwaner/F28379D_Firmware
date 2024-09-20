@@ -8,7 +8,6 @@
 #ifndef PERIPHERAL_SETUP_H_
 #define PERIPHERAL_SETUP_H_
 #include "F28x_Project.h"
-
 //Configures which trigger will start a burst conversion sequence.
 #define TRIG_SEL_SOFT   0x00
 #define TRIG_SEL_TIM0   0x01

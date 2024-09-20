@@ -9,6 +9,7 @@
 #pragma CODE_SECTION(isr_cpu_timer0, ".TI.ramfunc");
 #pragma CODE_SECTION(isr_scia_rx, ".TI.ramfunc");
 #endif
+
 __interrupt void isr_cpu_timer0(void);
 __interrupt void isr_scia_rx(void);
 // ======= Local variables =================

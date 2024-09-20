@@ -6,7 +6,6 @@ PAGE 0 :  /* Program Memory */
           /* BEGIN is used for the "boot to Flash" bootloader mode   */
 
    BEGIN           	: origin = 0x080000, length = 0x000002
-
    //RAMD0          : origin = 0x00B000, length = 0x000800
    //RAMD1          : origin = 0x00B800, length = 0x000800
    RAMD0_1          : origin = 0x00B000, length = 0x001000
