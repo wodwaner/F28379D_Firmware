@@ -58,7 +58,7 @@
 									<listOptionValue builtIn="false" value="_FLASH"/>
 									<listOptionValue builtIn="false" value="CPU1"/>
 								</option>
-								<option id="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL.139453092" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL.off" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL.139453092" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.OPT_LEVEL.4" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.FP_MODE.1607274359" name="Floating Point mode (--fp_mode)" superClass="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.FP_MODE" value="com.ti.ccstudio.buildDefinitions.C2000_21.6.compilerID.FP_MODE.relaxed" valueType="enumerated"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_21.6.compiler.inputType__C_SRCS.625573483" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_21.6.compiler.inputType__C_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_21.6.compiler.inputType__CPP_SRCS.1886129980" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_21.6.compiler.inputType__CPP_SRCS"/>

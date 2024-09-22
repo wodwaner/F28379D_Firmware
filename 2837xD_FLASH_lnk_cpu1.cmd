@@ -104,7 +104,7 @@ SECTIONS
 #ifdef __TI_COMPILER_VERSION__
     #if __TI_COMPILER_VERSION__ >= 15009000
         #if defined(__TI_EABI__)
-            .TI.ramfunc : {} LOAD = FLASHE,
+            .TI.ramfunc : {} LOAD = FLASHN,
                             RUN = RAMD0_1,
                             LOAD_START(RamfuncsLoadStart),
                             LOAD_SIZE(RamfuncsLoadSize),
@@ -112,13 +112,13 @@ SECTIONS
                             RUN_START(RamfuncsRunStart),
                             RUN_SIZE(RamfuncsRunSize),
                             RUN_END(RamfuncsRunEnd),
-                            PAGE = 0, ALIGN(8),
+                            PAGE = 0, ALIGN(0),
                             {
                              -l F021_API_F2837xD_FPU32.lib (.text)
                          	}
 
         #else
-            .TI.ramfunc : {} LOAD = FLASHE,
+            .TI.ramfunc : {} LOAD = FLASHN,
                             RUN = RAMD0_1,
                             LOAD_START(_RamfuncsLoadStart),
                             LOAD_SIZE(_RamfuncsLoadSize),
@@ -126,13 +126,13 @@ SECTIONS
                             RUN_START(_RamfuncsRunStart),
                             RUN_SIZE(_RamfuncsRunSize),
                             RUN_END(_RamfuncsRunEnd),
-                            PAGE = 0, ALIGN(8),
+                            PAGE = 0, ALIGN(0),
                             {
                              -l F021_API_F2837xD_FPU32.lib (.text)
                          	}
         #endif
     #else
-   ramfuncs            : LOAD = FLASHE,
+   ramfuncs            : LOAD = FLASHN,
                          RUN = RAMD0_1,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
@@ -140,7 +140,7 @@ SECTIONS
                          RUN_START(_RamfuncsRunStart),
                          RUN_SIZE(_RamfuncsRunSize),
                          RUN_END(_RamfuncsRunEnd),
-                         PAGE = 0, ALIGN(8),
+                         PAGE = 0, ALIGN(0),
                          {
                              -l F021_API_F2837xD_FPU32.lib (.text)
                          }

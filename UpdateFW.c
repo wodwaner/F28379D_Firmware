@@ -29,6 +29,12 @@
 #define BUFF_3 3
 #define BUFF_2 2
 
+#define FW_COD_SIZE   0x00
+#define FW_COD_DST_H   0x01
+#define FW_COD_DST_L   0x02
+#define FW_COD_DATA   0x03
+#define FW_COD_END   0xFF
+
 void gotoxy(uint8_t x, uint8_t y){
     //printf("\x1B[%d;%dH",y,x);
     //printf("\x1B[%d;%df",y,x);
@@ -46,7 +52,7 @@ int Set_Mincount(int fd, int mcount);
 void UART_Send(void);
 void *UART_Receive(void *t);
 void *User(void *t);
-
+void Flash_Sector(uint32_t address);
 
 typedef struct{
     int id_dev;
@@ -108,22 +114,21 @@ int main(int argc, char **argv){
     size = (ftell(Firmware.arq) - 4)>>1;        // get current file pointer
     fseek(Firmware.arq, 0, SEEK_SET);
 
-    gotoxy(0,1); printf("Size: %d bytes\n", size);
-    gotoxy(0,2); printf("[%4d]: %s", 0,"received");
-    gotoxy(0,3); printf("Command: \n");
-
-
+    gotoxy(0,1); printf("===============[ TMS320F28379D Firmware Update ]===================");
+    gotoxy(0,2); printf("Firmware size: [%d] bytes\n", size);
+    gotoxy(0,3); printf("Msn received from uC [%4d]: %s\n", 0,"received");
+    gotoxy(0,4); printf("Command: \n");
     Firmware.active = 0;
+
     while (running){
         if(Uart.new_message){
-            gotoxy(0,4); printf("                         \n");
-            gotoxy(0,2); printf("[%4d]: %s", ++cnt_msn,Uart.rx);
-            gotoxy(0,3); printf("Command: \n");
+            gotoxy(0,3); printf("Msn received from uC [%4d]: %s",++cnt_msn,Uart.rx);
+            gotoxy(0,4); printf("Command: \n"); printf("                         ");
+            gotoxy(0,5);
 
-            if(Firmware.active == 0 && Uart.rx[0] == 'U' && Uart.rx[1] == 'P' &&\
-                Uart.rx[2] == 'F' && Uart.rx[3] == 'W' && Uart.rx[4] == '1'){
+            if(Firmware.active == 0 && Uart.rx[0] == 'U' && Uart.rx[1] == 'P' && Uart.rx[2] == 'F' && Uart.rx[3] == 'W' && Uart.rx[4] == '1'){
                 Firmware.active = 1;
-                gotoxy(0,4); printf("Enter modo UPDATE Firmware!\n");
+                gotoxy(0,6); printf("Enter mode UPDATE Firmware!\n");
                 Uart.buff_size = BUFF_2;
             }
             Uart.new_message = 0;
@@ -134,43 +139,43 @@ int main(int argc, char **argv){
             i = Firmware.cnt_word = Firmware.is_data = 0;
             Firmware.position = START_POSITION;
             sleep(1);
-            gotoxy(0,5); printf("Begin Update.\n");
+            gotoxy(0,7); printf("Begin Update. Do not interrupt until finished\n");
             while(fread(&Firmware.data,sizeof(Firmware.data),1,Firmware.arq) == 1){
                 if(Firmware.is_data){
                     if(Firmware.cnt_word == 0){
                         Uart.tx[0] = ((Firmware.length>>8) & 0x00FF);
                         Uart.tx[1] = (Firmware.length & 0x00FF);
-                        Uart.tx[2] = 0x00;
+                        Uart.tx[2] = FW_COD_SIZE;
                         UART_Send();
                         while(Uart.new_message == 0) usleep(25);
-                        gotoxy(0,6); printf("Size [%04X]: %s \n", Firmware.length, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
+                        gotoxy(0,8); printf("Size [%04X]: %s \n", Firmware.length, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
                         memset(Uart.rx,0,sizeof(Uart.rx));
 
                         Uart.tx[0] = ((Firmware.address>>24) & 0x000000FF);
                         Uart.tx[1] = ((Firmware.address>>16) & 0x000000FF);
-                        Uart.tx[2] = 0x01;
+                        Uart.tx[2] = FW_COD_DST_H;
                         UART_Send();
                         while(Uart.new_message == 0) usleep(25);
-                        gotoxy(0,7); printf("Address [%08X] H: %s\n", Firmware.address, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
+                        gotoxy(0,9); printf("Address [%08X] H %s, ", Firmware.address, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
                         memset(Uart.rx,0,sizeof(Uart.rx));
 
                         Uart.tx[0] = ((Firmware.address>>8) & 0x000000FF);
                         Uart.tx[1] = ((Firmware.address>>0) & 0x000000FF);
-                        Uart.tx[2] = 0x02;
+                        Uart.tx[2] = FW_COD_DST_L;
                         UART_Send();
                         while(Uart.new_message == 0) usleep(25);
-                        gotoxy(0,8); printf("Address [%08X] L: %s\n", Firmware.address, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
+                        printf("L %s  : ", (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"));
+                        Flash_Sector(Firmware.address);
                         memset(Uart.rx,0,sizeof(Uart.rx));
-                        //exit(0);
                     }
 
                     if(Firmware.cnt_word < Firmware.length){
                         Uart.tx[0] = ((Firmware.data>>8) & 0x000000FF);
                         Uart.tx[1] = ((Firmware.data>>0) & 0x000000FF);
-                        Uart.tx[2] = 0x03;
+                        Uart.tx[2] = FW_COD_DATA;
                         UART_Send();
                         while(Uart.new_message == 0) usleep(10);
-                        gotoxy(0,9); printf("Data [%04X]: %s [%.2f %%] \n", Firmware.data, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"), 100.0*((float)i)/((float)size));
+                        gotoxy(0,10); printf("Data [%04X]: %s [%.1f %%] \n", Firmware.data, (((Uart.rx[0] == Uart.tx[0]) && (Uart.rx[1] == Uart.tx[2])) ? "OK" : "Error"), 100.0*((float)i)/((float)size));
                         memset(Uart.rx,0,sizeof(Uart.rx));
                     }else{
                         Firmware.is_data = 0;
@@ -183,15 +188,12 @@ int main(int argc, char **argv){
                 else if(i == (Firmware.position + 2)){
                     Firmware.position += (Firmware.length + 3);
                     Firmware.address |= (Firmware.data & 0x0000FFFF);
-                    //printf("[%d] = [%08X] [%04X] %d\n",i,Firmware.address, Firmware.length, Firmware.position);
                     Firmware.is_data = 1;
                     Firmware.cnt_word = 0;
                 }
                 i++;
             }
-            Uart.tx[0] = 0xFF;
-            Uart.tx[1] = 0xFF;
-            Uart.tx[2] = 0xFF;
+            Uart.tx[0] = Uart.tx[1] = Uart.tx[2] = FW_COD_END;
             UART_Send();
             usleep(100);
             UART_Send();
@@ -201,7 +203,7 @@ int main(int argc, char **argv){
     }
     fclose(Firmware.arq);
     close(Uart.id_dev);
-    printf("\nStop program\n");
+    printf("\n\nFinished\n");
     return 0;
 }
 
@@ -220,8 +222,7 @@ void Signal_Handler(int sign){
         break;
     }
     }
-    if (o_exit == 1)
-        running = 0;
+    if (o_exit == 1)  running = 0;
 }
 
 int Set_Interface_Attribs(int fd, int speed){
@@ -295,11 +296,29 @@ void *User(void *t){
     uint8_t opc = 0;
     uint8_t cmd[16];
     while(running){
-        gotoxy(0,3); printf("Command: \n");
+        gotoxy(0,4); printf("Command: \n"); printf("                         ");
+        gotoxy(0,5);
         scanf("%s",Uart.tx);
         Uart.tx[14] = '\r';
         Uart.tx[15] = '\n';
         UART_Send();
-        gotoxy(0,4); printf("                         \n");
+
     }
 }
+
+void Flash_Sector(uint32_t address){
+    if(address >= 0x80000 && address <= 0x81FFF) printf("Sector A");
+    else if(address >= 0x82000 && address <= 0x83FFF) printf("Sector C");
+    else if(address >= 0x86000 && address <= 0x87FFF) printf("Sector D");
+    else if(address >= 0x88000 && address <= 0x8FFFF) printf("Sector E");
+    else if(address >= 0x90000 && address <= 0x97FFF) printf("Sector F");
+    else if(address >= 0x98000 && address <= 0x9FFFF) printf("Sector G");
+    else if(address >= 0xA0000 && address <= 0xA7FFF) printf("Sector H");
+    else if(address >= 0xA8000 && address <= 0xAFFFF) printf("Sector I");
+    else if(address >= 0xB0000 && address <= 0xB7FFF) printf("Sector J");
+    else if(address >= 0xB8000 && address <= 0xB9FFF) printf("Sector K");
+    else if(address >= 0xBA000 && address <= 0xBBFFF) printf("Sector L");
+    else if(address >= 0xBC000 && address <= 0xBDFFF) printf("Sector M");
+    else if(address >= 0xBE000 && address <= 0xBFFFF) printf("Sector N");
+}
+

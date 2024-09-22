@@ -152,7 +152,7 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 F28379D_Firmware.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C2000 Linker'
-	"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla1 --float_support=fpu32 --tmu_support=tmu0 --vcu_support=vcu2 -Ooff --fp_mode=relaxed --define=_LAUNCHXL_F28379D --define=_FLASH --define=CPU1 -g --diag_warning=225 --diag_wrap=off --display_error_number --abi=coffabi -z -m"F28379D_Firmware.map" --stack_size=0x200 --warn_sections -i"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/lib" -i"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/include" -i"/opt/ti/C2000Ware_4_01_00_00_Linux/libraries/flash_api/f2837xd/lib" --reread_libs --diag_wrap=off --display_error_number --xml_link_info="F28379D_Firmware_linkInfo.xml" --rom_model -o "F28379D_Firmware.out" $(ORDERED_OBJS)
+	"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla1 --float_support=fpu32 --tmu_support=tmu0 --vcu_support=vcu2 -O4 --fp_mode=relaxed --define=_LAUNCHXL_F28379D --define=_FLASH --define=CPU1 -g --diag_warning=225 --diag_wrap=off --display_error_number --abi=coffabi -z -m"F28379D_Firmware.map" --stack_size=0x200 --warn_sections -i"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/lib" -i"/opt/ti/ccs1110/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS/include" -i"/opt/ti/C2000Ware_4_01_00_00_Linux/libraries/flash_api/f2837xd/lib" --reread_libs --diag_wrap=off --display_error_number --xml_link_info="F28379D_Firmware_linkInfo.xml" --rom_model -o "F28379D_Firmware.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 

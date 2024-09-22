@@ -47,31 +47,29 @@ uint8_t FW_Copy_Data(void){
     Fapi_FlashStatusType oFlashStatus;
 
     EALLOW;
-    // This function is required to initialize the Flash API based on System
-    // frequency before any other Flash API operation can be performed
+    // This function is required to initialize the Flash API based on System frequency before any other Flash API operation can be performed
     oReturnCheck = Fapi_initializeAPI(F021_CPU0_BASE_ADDRESS, 200);
     if(oReturnCheck != Fapi_Status_Success) return 0x01;
     //oFlashStatus = Fapi_getFsmStatus();
 
-    // Fapi_setActiveFlashBank function sets the Flash bank and FMC for further
-    // there is only one bank per FMC in the TMS320F2837xD device, only Fapi_FlashBank0 should be
-    // used for this paramete, TMS320F2837xD Flash API pg 11 SPNU629A.pdf
+    // Fapi_setActiveFlashBank function sets the Flash bank and FMC for further there is only one bank per FMC in
+    // the TMS320F2837xD device, only Fapi_FlashBank0 should be used for this paramete, TMS320F2837xD Flash API pg 11 SPNU629A.pdf
     oReturnCheck = Fapi_setActiveFlashBank(Fapi_FlashBank0);
     if(oReturnCheck != Fapi_Status_Success) return 0x02;
-
     EDIS;
+
     while(1){
-        Flash_Get_SCI_Data(&wordData, &cod);
+        FW_Get_SCI_Data(&wordData, &cod);
         if(cod == FW_COD_SIZE) BlockHeader.BlockSize = wordData;
         else if(cod == FW_COD_END) return 0;
 
-        Flash_Get_SCI_Data(&wordData, &cod);
+        FW_Get_SCI_Data(&wordData, &cod);
         if(cod == FW_COD_DST_H) BlockHeader.DestAddr = wordData;
         else if(cod == FW_COD_END) return 0;
 
         BlockHeader.DestAddr <<= 16;
 
-        Flash_Get_SCI_Data(&wordData, &cod);
+        FW_Get_SCI_Data(&wordData, &cod);
         if(cod == FW_COD_DST_L) BlockHeader.DestAddr |= wordData;
         else if(cod == FW_COD_END) return 0;
 
@@ -82,7 +80,7 @@ uint8_t FW_Copy_Data(void){
             for(j=0; j<N_WORDS; j++){
                 if(i < BlockHeader.BlockSize){
                     i++;
-                    Flash_Get_SCI_Data(&wordData, &cod);
+                    FW_Get_SCI_Data(&wordData, &cod);
                     if(cod == FW_COD_DATA) Buffer[j] = wordData;
                 }else{
                     Buffer[j] = 0xFFFF;
@@ -204,16 +202,16 @@ Uint32 Flash_Find_Sector(Uint32 address, Uint16 *size){
     return 0xdeadbeef; // a proxy address to signify that it is not/ a flash sector.
 }
 
-void Flash_Set_APIError(Fapi_StatusType status, st_statuscode *v){
+/*void Flash_Set_APIError(Fapi_StatusType status, st_statuscode *v){
     if(status == Fapi_Error_AsyncIncorrectDataBufferLength) v->flashAPIError = INCORRECT_DATA_BUFFER_LENGTH;
     else if(status == Fapi_Error_AsyncIncorrectEccBufferLength)  v->flashAPIError = INCORRECT_ECC_BUFFER_LENGTH;
     else if(status == Fapi_Error_AsyncDataEccBufferLengthMismatch)  v->flashAPIError = DATA_ECC_BUFFER_LENGTH_MISMATCH;
     else if(status == Fapi_Error_FeatureNotAvailable)  v->flashAPIError = FEATURE_NOT_AVAILABLE;
     else if(status == Fapi_Error_Fail)  v->flashAPIError = FAILURE;
     else  v->Status = NOT_RECOGNIZED;
-}
+}*/
 
-void Flash_Get_SCI_Data(Uint16 *data, uint8_t *cod){
+void FW_Get_SCI_Data(Uint16 *data, uint8_t *cod){
     uint8_t temp[3];
     while(SciaRegs.SCIFFRX.bit.RXFFST < 3);
     temp[0] = SciaRegs.SCIRXBUF.all;

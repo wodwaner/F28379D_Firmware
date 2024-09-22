@@ -81,21 +81,14 @@ typedef struct{
 #pragma CODE_SECTION(FW_Update,".TI.ramfunc");
 #pragma CODE_SECTION(FW_Copy_Data,".TI.ramfunc");
 #pragma CODE_SECTION(Flash_Find_Sector,".TI.ramfunc");
-#pragma CODE_SECTION(Flash_Set_APIError,".TI.ramfunc");
-#pragma CODE_SECTION(Flash_Get_SCI_Data,".TI.ramfunc");
-
-extern Uint16 Upflash_LoadStart;
-extern Uint16 Upflash_LoadSize;
-extern Uint16 Upflash_LoadEnd;
-extern Uint16 Upflash_RunStart;
-extern Uint16 Upflash_RunSize;
-extern Uint16 Upflash_RunEnd;
+//#pragma CODE_SECTION(Flash_Set_APIError,".TI.ramfunc");
+#pragma CODE_SECTION(FW_Get_SCI_Data,".TI.ramfunc");
 #endif
 
 void FW_Update(void);
 uint8_t FW_Copy_Data(void);
 Uint32 Flash_Find_Sector(Uint32 address, Uint16 *size);
-void Flash_Set_APIError(Fapi_StatusType status, st_statuscode *v);
-void Flash_Get_SCI_Data(Uint16 *data, uint8_t *cod);
+//void Flash_Set_APIError(Fapi_StatusType status, st_statuscode *v);
+void FW_Get_SCI_Data(Uint16 *data, uint8_t *cod);
 
 #endif /* FLASH_F28379D_H_ */

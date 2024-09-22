@@ -3,6 +3,7 @@
 #include "Flash_F28379D.h"
 
 // ====== Local functions ==================
+void SCI_MsnDecode(void);
 
 // ======= Interruptions ===================
 #ifdef _FLASH
@@ -17,7 +18,6 @@ uint32_t counter = 0;
 st_SCI SCI;
 
 void main(void){
-    uint8_t i;
 
     InitSysCtrl();                              // Initialize System Control:
     DisablePeripheralClocks();
@@ -59,26 +59,35 @@ void main(void){
         }
 
         if(SCI.transmit_message) SCI.send(&SCI);
+        if(SCI.new_message) SCI_MsnDecode();
+    }// end while(1)
+}
 
-        if(SCI.new_message){
-            SCI.new_message = 0;
-            if(SCI.rx[14] != '\r' || SCI.rx[15] != '\n') continue;
-            for(i=0;i<UART_BUFF_SIZE-2;i++) SCI.tx[i] = ' ';
-            if(SCI.rx[0] == 'F' && SCI.rx[1] == 'W' && SCI.rx[2] == 'V' && SCI.rx[3] == 'E' && SCI.rx[4] == 'R'){
-                SCI.tx[0] = 'F'; SCI.tx[1] = 'W'; SCI.tx[2] = '.'; SCI.tx[3] = ' ';
-                SCI.tx[4] = 'V'; SCI.tx[5] = '0'; SCI.tx[6] = '0'; SCI.tx[7] = '3';
-                SCI.transmit_message = 1;
-            }else if(SCI.rx[0] == 'H' && SCI.rx[1] == 'E' && SCI.rx[2] == 'L' && SCI.rx[3] == 'L' && SCI.rx[4] == 'O'){
-                SCI.tx[0] = 'H'; SCI.tx[1] = 'e'; SCI.tx[2] = SCI.tx[3] = 'l'; SCI.tx[4] = 'o';
-                SCI.tx[5] = ' ';
-                SCI.tx[6] = 'W'; SCI.tx[7] = 'o'; SCI.tx[8] = 'r'; SCI.tx[9] = 'l'; SCI.tx[10] = 'd';
-                SCI.transmit_message = 1;
-            }else if(SCI.rx[0] == 'U' && SCI.rx[1] == 'P' && SCI.rx[2] == 'F' && SCI.rx[3] == 'W' && SCI.rx[4] == '0'){
-                FW_Update();
-            }
-        }
+//=========================================
+void SCI_MsnDecode(void){
+    uint8_t i;
+
+    if(SCI.rx[14] != '\r' || SCI.rx[15] != '\n') return;
+
+    for(i=0;i<UART_BUFF_SIZE-2;i++) SCI.tx[i] = ' ';
+
+    if(SCI.rx[0] == 'F' && SCI.rx[1] == 'W' && SCI.rx[2] == 'V' && SCI.rx[3] == 'E' && SCI.rx[4] == 'R'){
+
+        SCI.tx[0] = 'F'; SCI.tx[1] = 'W'; SCI.tx[2] = '.'; SCI.tx[3] = ' ';
+        SCI.tx[4] = 'V'; SCI.tx[5] = '0'; SCI.tx[6] = '0'; SCI.tx[7] = '4';
+        SCI.transmit_message = 1;
+
+    }else if(SCI.rx[0] == 'H' && SCI.rx[1] == 'E' && SCI.rx[2] == 'L' && SCI.rx[3] == 'L' && SCI.rx[4] == 'O'){
+
+        SCI.tx[0] = 'H'; SCI.tx[1] = 'e'; SCI.tx[2] = SCI.tx[3] = 'l'; SCI.tx[4] = 'o';
+        SCI.tx[5] = ' ';
+        SCI.tx[6] = 'W'; SCI.tx[7] = 'o'; SCI.tx[8] = 'r'; SCI.tx[9] = 'l'; SCI.tx[10] = 'd';
+        SCI.transmit_message = 1;
+
+    }else if(SCI.rx[0] == 'U' && SCI.rx[1] == 'P' && SCI.rx[2] == 'F' && SCI.rx[3] == 'W' && SCI.rx[4] == '0'){
+        FW_Update();
     }
-    return;
+    SCI.new_message = 0;
 }
 
 
