@@ -84,7 +84,7 @@
 	<variableList>
 		<variable>
 			<name>C2000Ware</name>
-			<value>file:/opt/ti/C2000Ware_4_01_00_00_Linux</value>
+			<value>file:/Applications/ti/C2000Ware_5_02_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>
